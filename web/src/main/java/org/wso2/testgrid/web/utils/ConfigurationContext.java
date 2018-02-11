@@ -18,6 +18,8 @@
 
 package org.wso2.testgrid.web.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.testgrid.common.exception.TestGridException;
 import org.wso2.testgrid.common.util.TestGridUtil;
 
@@ -26,6 +28,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -35,13 +38,19 @@ import java.util.Properties;
 public class ConfigurationContext {
     private static InputStream inputStream;
     private static boolean isFileAccessed;
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationContext.class);
     static {
         try {
-            Path configPath = Paths.get(TestGridUtil.getTestGridHomePath(), "testgrid-web-config.properties");
+            Path configPath = Paths.get(TestGridUtil.getTestGridHomePath(), Constants.WEB_PROPERTY_FILE_NAME);
             inputStream = Files.newInputStream(configPath);
             isFileAccessed = true;
+            if (Objects.equals(getProperty(Constants.PROPERTYNAME_ENABLE_SSO), "false")) {
+                logger.warn("WARNING: SSO is disabled by the property file.");
+            }
         } catch (IOException e) {
             isFileAccessed = false;
+        } catch (TestGridException e) {
+            logger.error("Error occurred while reading " + Constants.WEB_PROPERTY_FILE_NAME + "file. " + e.getMessage());
         }
     }
     private static Properties properties = new Properties();
