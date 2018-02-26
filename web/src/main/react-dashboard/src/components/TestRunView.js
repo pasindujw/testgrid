@@ -103,8 +103,7 @@ class TestRunView extends Component {
           logDownloadStatus: response.ok ? SUCCESS : ERROR
         });
         return response.json();
-      })
-        .then(data =>
+      }).then(data =>
         this.setState({
           logContent: data.inputStreamContent,
           isLogTruncated: data.truncated,

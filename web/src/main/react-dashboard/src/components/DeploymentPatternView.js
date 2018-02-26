@@ -61,7 +61,8 @@ class DeploymentPatternView extends Component {
       headers: {
         'Accept': 'application/json'
       }
-    }).then(this.handleError)
+    })
+    .then(this.handleError)
     .then(response => { return response.json()})
     .then(data => this.setState({ hits: data }))
     .catch(error => console.error(error));

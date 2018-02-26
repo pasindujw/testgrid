@@ -44,6 +44,13 @@ class TestCaseView extends Component {
 
     }
 
+    handleError(response) {
+        if (response.status.toString() === HTTP_UNAUTHORIZED) {
+            window.location.replace(LOGIN_URI);
+            return response;
+        }
+    }
+
     componentDidMount() {
         var url = '/testgrid/v0.9/api/test-scenarios/'+this.props.active.reducer.currentScenario.scenarioId;
 
@@ -53,18 +60,14 @@ class TestCaseView extends Component {
             headers: {
                 'Accept': 'application/json'
             }
-        }).then(function (response) {
-            if (response.status.toString() === HTTP_UNAUTHORIZED) {
-                window.location.replace(LOGIN_URI);
-            }
-            return response;
-        }).then(response => {
+        })
+        .then(this.handleError)
+        .then(response => {
             return response.json();
         })
             .then(data => this.setState({ hits: data }));
 
     }
-
 
     render() {
         return (
