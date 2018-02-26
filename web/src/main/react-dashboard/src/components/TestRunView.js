@@ -39,7 +39,7 @@ import {
 import Download from 'downloadjs'
 import Websocket from 'react-websocket';
 import Snackbar from 'material-ui/Snackbar';
-import {FAIL,SUCCESS,ERROR,PENDING,RUNNING, HTTP_UNAUTHORIZED, LOGIN_URI } from '../constants.js';
+import {FAIL,SUCCESS,ERROR,PENDING,RUNNING,HTTP_UNAUTHORIZED,LOGIN_URI} from '../constants.js';
 
 
 /**

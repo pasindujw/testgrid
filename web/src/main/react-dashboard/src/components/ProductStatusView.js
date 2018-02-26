@@ -30,7 +30,7 @@ import SingleRecord from './SingleRecord.js';
 import { add_current_product } from '../actions/testGridActions.js';
 import Moment from 'moment'
 import ReactTooltip from 'react-tooltip';
-import {FAIL,SUCCESS,ERROR,PENDING,RUNNING, HTTP_UNAUTHORIZED, LOGIN_URI } from '../constants.js';
+import {FAIL,SUCCESS,ERROR,PENDING,RUNNING,HTTP_UNAUTHORIZED,LOGIN_URI} from '../constants.js';
 
 class ProductStatusView extends Component {
 
@@ -60,7 +60,7 @@ class ProductStatusView extends Component {
         'Accept': 'application/json'
       }
     })
-        .then(this.handleError)
+    .then(this.handleError)
     .then(response => {return response.json()})
     .then(data => this.setState({ hits: data }))
     .catch(error => console.error(error));
