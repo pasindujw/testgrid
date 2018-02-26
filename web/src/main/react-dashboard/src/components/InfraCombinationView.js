@@ -32,7 +32,7 @@ import { add_current_infra, add_current_deployment } from '../actions/testGridAc
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import Moment from 'moment';
-import {FAIL,SUCCESS,ERROR,PENDING,RUNNING } from '../constants.js';
+import {FAIL,SUCCESS,ERROR,PENDING,RUNNING,HTTP_UNAUTHORIZED, LOGIN_URI } from '../constants.js';
 
 class InfraCombinationView extends Component {
 
@@ -45,8 +45,10 @@ class InfraCombinationView extends Component {
     }
 
     handleError(response) {
-        if (!response.ok) {
-          throw Error(response.statusText)
+        if (response.status.toString() === HTTP_UNAUTHORIZED) {
+            window.location.replace(LOGIN_URI);
+        } else if(!response.ok){
+            throw Error(response.statusText)
         }
         return response;
     }

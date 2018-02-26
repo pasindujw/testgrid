@@ -32,7 +32,7 @@ import { add_current_deployment, add_current_infra } from '../actions/testGridAc
 import Moment from 'moment'
 import ReactTooltip from 'react-tooltip'
 import FlatButton from 'material-ui/FlatButton';
-import {FAIL,SUCCESS,ERROR,PENDING,RUNNING } from '../constants.js';
+import {FAIL,SUCCESS,ERROR,PENDING,RUNNING,HTTP_UNAUTHORIZED,LOGIN_URI } from '../constants.js';
 
 class DeploymentPatternView extends Component {
 
@@ -45,10 +45,12 @@ class DeploymentPatternView extends Component {
   }
 
   handleError(response) {
-    if (!response.ok) {
-      throw Error(response.statusText)
-    }
-    return response;
+      if (response.status.toString() === HTTP_UNAUTHORIZED) {
+          window.location.replace(LOGIN_URI);
+      } else if(!response.ok){
+          throw Error(response.statusText)
+      }
+      return response;
   }
 
   componentDidMount() {
@@ -59,8 +61,7 @@ class DeploymentPatternView extends Component {
       headers: {
         'Accept': 'application/json'
       }
-    })
-    .then(this.handleError)
+    }).then(this.handleError)
     .then(response => { return response.json()})
     .then(data => this.setState({ hits: data }))
     .catch(error => console.error(error));
