@@ -28,7 +28,7 @@ import {
 } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 import SingleRecord from './SingleRecord.js';
-import {HTTP_UNAUTHORIZED,LOGIN_URI} from '../constants.js';
+import {HTTP_UNAUTHORIZED, LOGIN_URI} from '../constants.js';
 
 class TestCaseView extends Component {
 

@@ -28,11 +28,11 @@ import {
 } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 import SingleRecord from './SingleRecord.js';
-import { add_current_deployment, add_current_infra } from '../actions/testGridActions.js';
+import {add_current_deployment, add_current_infra} from '../actions/testGridActions.js';
 import Moment from 'moment'
 import ReactTooltip from 'react-tooltip'
 import FlatButton from 'material-ui/FlatButton';
-import {FAIL,SUCCESS,ERROR,PENDING,RUNNING,HTTP_UNAUTHORIZED,LOGIN_URI } from '../constants.js';
+import {FAIL, SUCCESS, ERROR, PENDING, RUNNING, HTTP_UNAUTHORIZED, LOGIN_URI} from '../constants.js';
 
 class DeploymentPatternView extends Component {
 

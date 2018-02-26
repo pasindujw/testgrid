@@ -28,8 +28,8 @@ import {
 } from 'material-ui/Table';
 import Subheader from 'material-ui/Subheader';
 import SingleRecord from './SingleRecord.js';
-import { add_current_scenario } from '../actions/testGridActions.js';
-import {HTTP_UNAUTHORIZED,LOGIN_URI} from '../constants.js';
+import {add_current_scenario} from '../actions/testGridActions.js';
+import {HTTP_UNAUTHORIZED, LOGIN_URI} from '../constants.js';
 
 class ScenarioView extends Component {
 
