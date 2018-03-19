@@ -34,6 +34,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.wso2.testgrid.automation.TestAutomationException;
+import org.wso2.testgrid.automation.executor.JMeterExecutor;
+import org.wso2.testgrid.automation.executor.TestExecutorFactory;
 import org.wso2.testgrid.common.DeploymentPattern;
 import org.wso2.testgrid.common.Product;
 import org.wso2.testgrid.common.TestGridConstants;
@@ -70,7 +73,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertTrue;
 
-@PrepareForTest(StringUtil.class)
+@PrepareForTest({ StringUtil.class, TestExecutorFactory.class })
 @PowerMockIgnore({ "javax.management.*", "javax.script.*" })
 public class RunTestPlanCommandTest extends PowerMockTestCase {
 
@@ -109,8 +112,8 @@ public class RunTestPlanCommandTest extends PowerMockTestCase {
     public void init() throws Exception {
         final String randomStr = StringUtil.generateRandomString(5);
         String productName = "wso2-" + randomStr;
-        actualTestPlanFileLocation = Paths.get("target", "testgrid-home", productName, "test-plans",
-                "test-plan-01.yaml").toString();
+        actualTestPlanFileLocation = Paths.get("target", "testgrid-home", TestGridConstants.TESTGRID_JOB_DIR,
+                productName, TestGridConstants.PRODUCT_TEST_PLANS_DIR, "test-plan-01.yaml").toString();
         runTestPlanCommand = new RunTestPlanCommand(productName, actualTestPlanFileLocation);
         System.setProperty(TestGridConstants.TESTGRID_HOME_SYSTEM_PROPERTY, TESTGRID_HOME);
 
@@ -150,8 +153,7 @@ public class RunTestPlanCommandTest extends PowerMockTestCase {
 
         runTestPlanCommand.execute();
 
-        Path testRunDirectory = TestGridUtil.getTestRunArtifactsDirectory(testPlan);
-        testRunDirectory = Paths.get(TestGridUtil.getTestGridHomePath()).resolve(testRunDirectory);
+        Path testRunDirectory = TestGridUtil.getTestRunWorkspace(testPlan, false);
         assertTrue(Files.exists(testRunDirectory),
                 "The test-run dir does not exist: " + testRunDirectory.toString());
 
@@ -165,9 +167,11 @@ public class RunTestPlanCommandTest extends PowerMockTestCase {
         Assert.assertEquals(content, "Deploy server1\n", "my-deployment.txt file does not contain expected content.");
     }
 
-    private void doMock() throws TestGridDAOException {
+    private void doMock() throws TestGridDAOException, TestAutomationException {
         PowerMockito.spy(StringUtil.class);
         when(StringUtil.generateRandomString(anyInt())).thenReturn("");
+        PowerMockito.mockStatic(TestExecutorFactory.class);
+        when(TestExecutorFactory.getTestExecutor(any())).thenReturn(new JMeterExecutor(testScenarioUOW));
 
         InfrastructureParameter param = new InfrastructureParameter("ubuntu_16.04", DefaultInfrastructureTypes
                 .OPERATING_SYSTEM, "{}", true);
@@ -191,8 +195,8 @@ public class RunTestPlanCommandTest extends PowerMockTestCase {
 
     @AfterMethod
     public void tearDown() throws Exception {
-        Path testPlanPath = Paths.get(TESTGRID_HOME, product.getName(), TestGridConstants.PRODUCT_TEST_PLANS_DIR,
-                "test-plan-01.yaml");
+        Path testPlanPath = Paths.get(TESTGRID_HOME, TestGridConstants.TESTGRID_JOB_DIR, product.getName(),
+                TestGridConstants.PRODUCT_TEST_PLANS_DIR, "test-plan-01.yaml");
         if (Files.exists(testPlanPath)) {
             FileUtils.forceDelete(testPlanPath.toFile());
         } else {
