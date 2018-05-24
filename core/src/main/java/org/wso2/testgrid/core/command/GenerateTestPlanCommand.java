@@ -71,6 +71,7 @@ import java.util.Set;
 
 import static org.wso2.testgrid.common.TestGridConstants.PRODUCT_TEST_PLANS_DIR;
 import static org.wso2.testgrid.common.TestGridConstants.TESTGRID_JOB_DIR;
+import static org.wso2.testgrid.common.TestGridConstants.TESTGRID_YAML;
 
 /**
  * Responsible for generating the infrastructure plan and persisting them in the file system.
@@ -349,19 +350,20 @@ public class GenerateTestPlanCommand implements Command {
         StringBuilder testgridYamlBuilder = new StringBuilder();
         String ls = System.lineSeparator();
         testgridYamlBuilder
-                .append(getTestgridYamlFor(Paths.get(infraRepositoryLocation, TestGridConstants.TESTGRID_YAML)))
+                .append(getTestgridYamlFor(
+                        getTestGridYamlLocation(infraRepositoryLocation)))
                 .append(ls);
         String testgridYamlContent = testgridYamlBuilder.toString().trim();
         if (!testgridYamlContent.isEmpty()) {
             if (!testgridYamlContent.contains("deploymentConfig")) {
                 testgridYamlBuilder
                         .append(getTestgridYamlFor(
-                                Paths.get(deployRepositoryLocation, TestGridConstants.TESTGRID_YAML)))
+                                getTestGridYamlLocation(deployRepositoryLocation)))
                         .append(ls);
             }
             testgridYamlBuilder
                     .append(getTestgridYamlFor(
-                            Paths.get(scenarioTestsRepositoryLocation, TestGridConstants.TESTGRID_YAML)))
+                            getTestGridYamlLocation(scenarioTestsRepositoryLocation)))
                     .append(ls);
         } else {
             logger.warn(StringUtil.concatStrings(
@@ -628,6 +630,22 @@ public class GenerateTestPlanCommand implements Command {
             } else {
                 return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
             }
+        }
+    }
+
+    /**
+     * If the testgrid yaml file is hidden in the directory, change the URI as to refer the hidden file.
+     * @param directory directory where the testgrid yaml file exists
+     * @return testgrid yaml file path
+     */
+    private Path getTestGridYamlLocation(String directory) {
+        String hiddenFileDot = ".";
+        Path yamlPathIfHidden = Paths.get(directory, hiddenFileDot + TESTGRID_YAML);
+        Path yamlPathIfNotHidden = Paths.get(directory, TESTGRID_YAML);
+        if (Files.exists(yamlPathIfHidden)) {
+            return yamlPathIfHidden;
+        } else {
+            return yamlPathIfNotHidden;
         }
     }
 }
