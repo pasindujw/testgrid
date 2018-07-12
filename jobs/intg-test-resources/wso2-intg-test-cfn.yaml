@@ -338,28 +338,6 @@ Resources:
                  }
             }
          }
-#  WSO2DBInstance:
-#    Type: 'AWS::RDS::DBInstance'
-#    Properties:
-#      AllocatedStorage: !Ref DBAllocatedStorage
-#      DBInstanceClass: !Ref DBClass
-#      Engine: !Ref DBEngine
-#      EngineVersion: !Ref DBEngineVersion
-#      DBInstanceIdentifier: wso2-dbinstance
-#      LicenseModel: !FindInMap [DB2Licence, !Ref "DBEngine", license]
-#      MasterUsername: !Ref DBUsername
-#      MasterUserPassword: !Ref DBPassword
-#      AutoMinorVersionUpgrade: false
-#      BackupRetentionPeriod: 0
-#      VPCSecurityGroups:
-#        - !GetAtt WSO2EnvDBSecurityGroup.GroupId
-#      AvailabilityZone: !Select
-#        - '0'
-#        - !GetAZs ''
-#    DeletionPolicy: Delete
-#    Metadata:
-#      'AWS::CloudFormation::Designer':
-#        id: 5352b4e9-46ed-4a23-8bdc-bafc3666cbbd
 Outputs:
   WSO2MgtConsoleURL:
     Value: !If [IsUnix, !Sub 'https://${WSO2UnixInstance.PublicDnsName}:9443/carbon', !If [IsWindows, !Sub 'https://${WSO2WindowsInstance.PublicDnsName}:9443/carbon', !Ref 'AWS::NoValue']]
@@ -367,12 +345,6 @@ Outputs:
   WSO2PublicIP:
     Value: !If [IsUnix, !Sub '${WSO2UnixInstance.PublicIp}', !If [IsWindows, !Sub '${WSO2WindowsInstance.PublicIp}', !Ref 'AWS::NoValue']]
     Description: Private IP of the WSO2 Product Instance
-#  DatabaseHost:
-#    Value: !Sub '${WSO2DBInstance.Endpoint.Address}'
-#    Description: Database Host
-#  DatabasePort:
-#    Value: !Sub '${WSO2DBInstance.Endpoint.Port}'
-#    Description: Database Port
   OS:
     Value: !Ref OS
   WSO2InstanceId:

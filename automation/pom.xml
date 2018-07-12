@@ -115,7 +115,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-
+        <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-jdk14</artifactId> <version>1.7.25</version> </dependency>
         <!-- Jacoco agent -->
         <dependency>
             <groupId>org.jacoco</groupId>
