@@ -128,8 +128,10 @@ public class TestPlanExecutor {
                 testPlan);
         //setup product performance dashboard
         if (infrastructureProvisionResult.isSuccess()) {
+            logger.info("before dashboard setup");
             DashboardSetup dashboardSetup = new DashboardSetup(testPlan.getId());
             dashboardSetup.initDashboard();
+            logger.info("after init dashboard");
         }
 
         // Create and set deployment.
@@ -149,11 +151,14 @@ public class TestPlanExecutor {
             printSummary(testPlan, System.currentTimeMillis() - startTime);
             return false;
         }
+        logger.info("Before runScenarioTests");
         // Run test scenarios.
         runScenarioTests(testPlan, deploymentCreationResult);
 
         try {
             //post test plan actions
+            logger.info("Before performPostTestPlanActions");
+
             performPostTestPlanActions(testPlan, deploymentCreationResult);
         } catch (Throwable e) {
             //catch throwable here because we need to ensure the test plan life cycle executes fully
@@ -265,6 +270,7 @@ public class TestPlanExecutor {
         String scriptsLocation = testPlan.getScenarioTestsRepository();
         ShellExecutor shellExecutor = new ShellExecutor(Paths.get(scriptsLocation));
         boolean status = true;
+        logger.info("Inside runPostScenarioScripts 1");
 
         Map<String, String> environment = new HashMap<>();
         for (Host host : deploymentCreationResult.getHosts()) {
@@ -303,6 +309,7 @@ public class TestPlanExecutor {
     public void runScenarioTests(TestPlan testPlan, DeploymentCreationResult deploymentCreationResult) {
         // Run init.sh in scenario repository
         boolean status = runPreScenariosScripts(testPlan, deploymentCreationResult);
+        logger.info("Inside runScenarioTests 1");
 
         if (status) {
             /* Set dir for scenarios from values matched from test-plan yaml file */
@@ -313,6 +320,7 @@ public class TestPlanExecutor {
                     }
                 }
             }
+            logger.info("Inside runScenarioTests 2");
 
             List<ConfigChangeSet> configChangeSetList = testPlan.getScenarioConfig().getConfigChangeSets();
             // Run test with config change sets
@@ -367,6 +375,9 @@ public class TestPlanExecutor {
                                         " on test plan " + testPlan.getId());
                             }
                         }
+
+                        logger.info("Inside runScenarioTests 3");
+
                         // Remove config set repos on agent
                         configChangeSetExecutor.get().deInitConfigChangeSet(testPlan);
                     }
@@ -380,6 +391,8 @@ public class TestPlanExecutor {
                     executeTestScenario(testScenario, deploymentCreationResult, testPlan);
                 }
             }
+            logger.info("Inside runScenarioTests 4 before runPostScenarioScripts");
+
             // Run cleanup.sh in scenario repository
             runPostScenariosScripts(testPlan, deploymentCreationResult);
         } else {
@@ -442,8 +455,10 @@ public class TestPlanExecutor {
                 deploymentCreationResult.setSuccess(false);
                 return deploymentCreationResult;
             }
+            logger.info("Inside createDeployement 1");
 
             Deployer deployerService = DeployerFactory.getDeployerService(testPlan);
+            logger.info("Inside createDeployement 2");
             return deployerService.deploy(testPlan, infrastructureProvisionResult);
         } catch (TestGridDeployerException e) {
             persistTestPlanStatus(testPlan, Status.FAIL);

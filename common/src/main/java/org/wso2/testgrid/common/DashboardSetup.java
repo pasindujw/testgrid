@@ -59,6 +59,7 @@ public class DashboardSetup {
 
     public DashboardSetup(String testplanID) {
         this.testplanID = testplanID;
+        logger.info("Dashboard setup testplan ID:" + testplanID);
     }
 
     /**
@@ -67,14 +68,18 @@ public class DashboardSetup {
     public void initDashboard() {
         // create influxDB database according to tp_id
         try {
+            logger.info("before InfluxDBFac connect");
+            logger.info("INFLUX URL:" + restUrl);
             InfluxDB influxDB = InfluxDBFactory.connect(TestGridConstants.HTTP + restUrl, username, password);
+            logger.info("Dahsboardsetup 1");
             String dbName = testplanID;
             influxDB.createDatabase(dbName);
+            logger.info("Dahsboardsetup 2");
             influxDB.close();
         } catch (AssertionError e) {
             logger.error(StringUtil.concatStrings("Cannot create a new Database: \n", e));
-        } catch (IllegalArgumentException e) {
-            logger.error(StringUtil.concatStrings("INFLUXDB_USER and INFLUXDB_PASS cannot be empty: \n", e));
+        } catch (Throwable e) {
+            logger.info("Exception influx", e);
         }
 
         // add a new data source to grafana
@@ -110,6 +115,7 @@ public class DashboardSetup {
      * This method will create a grafana datasource according to TestPlanID
      */
     public void addGrafanaDataSource() {
+        logger.info("Dahsboardsetup 3");
 
         DataOutputStream dataOutputStream = null;
         try {
@@ -122,7 +128,11 @@ public class DashboardSetup {
             HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 
             URL obj = new URL(url);
+            logger.info("Dahsboardsetup 4");
+
             HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+            logger.info("Dahsboardsetup 5");
+
             //add request header
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", USER_AGENT);
@@ -136,6 +146,7 @@ public class DashboardSetup {
             dataOutputStream = new DataOutputStream(con.getOutputStream());
             dataOutputStream.writeBytes(urlParameters);
             dataOutputStream.flush();
+            logger.info("before grafana getResponseCode");
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 logger.info("grafana Data Source created for testplan " + testplanID);
