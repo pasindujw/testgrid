@@ -212,9 +212,7 @@ class InfraCombinationView extends Component {
                 <td>{index + 1}</td>
                 <td>
                   <FlatButton style={{height: 'inherit', width: '100%', 'max-width': '150px'}}
-                              onClick={() => this.navigateToRoute(TESTGRID_CONTEXT + "/" +
-                                this.state.currentInfra.relatedProduct + "/" +
-                                this.state.currentInfra.relatedDeplymentPattern + "/test-plans/"
+                              onClick={() => this.navigateToRoute(TESTGRID_CONTEXT + "/test-plans/"
                                 + data.id, {
                                 deploymentPatternName:
                                 this.state.currentInfra.relatedProduct
